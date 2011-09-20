@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.fusesource.support.producers</groupId>
   <artifactId>activemq-producers</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>5.4.2-fuse-00-00</version>
   <packaging>jar</packaging>
 
   <name>activemq-producers</name>
@@ -12,7 +12,38 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <activemq.version>5.4.2-fuse-00-00</activemq.version>
+    <spring.version>3.0.5.RELEASE</spring.version>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+  	<groupId>org.apache.maven.plugins</groupId>
+  	<artifactId>maven-clean-plugin</artifactId>
+  	<version>2.4.1</version>
+  	<configuration>
+  	  <filesets>
+  	    <fileset>
+  	      <directory>hub</directory>
+  	    </fileset>
+  	    <fileset>
+  	      <directory>spoke</directory>
+  	    </fileset>
+  	    <fileset>
+  	      <directory>.</directory>
+  	      <includes>
+  		<include>hub-*</include>
+  		<include>spoke-*</include>
+  	      </includes>
+  	    </fileset>
+  	  </filesets>
+  	</configuration>
+  	<extensions>false</extensions>
+  	<inherited>false</inherited>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -22,30 +53,43 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.apache.activemq</groupId>
-    	<artifactId>activemq-core</artifactId>
-    	<version>5.4.2-fuse-00-00</version>
-    	<optional>false</optional>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-core</artifactId>
+      <version>${activemq.version}</version>
+      <optional>false</optional>
     </dependency>
-  	<dependency>
-  		<groupId>org.valhalla.tools.process</groupId>
-  		<artifactId>process-ipc-tools</artifactId>
-  		<version>1.0</version>
-  		<scope>test</scope>
-  		<optional>false</optional>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-core</artifactId>
-  		<version>3.0.5.RELEASE</version>
-  		<optional>false</optional>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.fusesource.support.hubspoke</groupId>
-  		<artifactId>hub-spoke-configuration</artifactId>
-  		<version>1.0-SNAPSHOT</version>
-  		<scope>test</scope>
-  		<optional>false</optional>
-  	</dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.11</version>
+      <optional>false</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.5.11</version>
+      <scope>test</scope>
+      <optional>false</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.valhalla.tools.process</groupId>
+      <artifactId>process-ipc-tools</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+      <optional>false</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+      <optional>false</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.fusesource.support.hubspoke</groupId>
+      <artifactId>hub-spoke-configuration</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>test</scope>
+      <optional>false</optional>
+    </dependency>
   </dependencies>
 </project>
