@@ -18,6 +18,7 @@ package com.fusesource.support.producer;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.Properties;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
@@ -32,7 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fusesource.support.hubspoke.server.BrokerServiceSpawner;
+import org.apache.activemq.brokerservice.runner.HubSpokeBrokerServiceSpawner;
 import com.fusesource.support.message.chain.IntegerMessageChain;
 import com.fusesource.support.message.chain.MessageChain;
 import com.fusesource.support.message.chain.StringMessageChain;
@@ -49,14 +50,69 @@ public class ProducerExecutorTest {
 	
 	private ActiveMQConnectionFactory factory;
 	private Connection connection;
-	private BrokerServiceSpawner spawner;
+	private HubSpokeBrokerServiceSpawner spawner;
 
 	@Before
 	public void setup() throws JMSException, IOException, InterruptedException {
-		spawner = new BrokerServiceSpawner();
-		spawner.setAmqDefaultPort("61616");
-		spawner.setNumberOfHubs(1);
-		spawner.setNumberOfSpokesPerHub(1);
+                System.out.println("java.class.path=" + System.getProperty("java.class.path"));
+                spawner = new HubSpokeBrokerServiceSpawner() {
+                        private int currentPort;
+                        private int hubPort;
+                        private int hubId;
+
+                        @Override
+                        public String getSpokeTemplatePrefix() {
+                            return "spoke-activemq";
+                        }
+
+                        @Override
+                        public String getHubTemplatePrefix() {
+                            return "hub-activemq";
+                        }
+
+                        @Override
+                        public void populateProperties(TYPE type, Properties props, int idx) {
+                            switch(type) {
+                            case HUB:
+                                populateHubProperties(props, idx);
+                                break;
+                            case SPOKE:
+                                populateSpokeProperties(props, idx);
+                                break;
+                            }
+                        }
+
+                        @Override
+                        protected void preCreateSpawners() {
+                            currentPort = getAmqPort();
+                        }
+
+                        private void populateHubProperties(Properties props, int idx) {
+                            hubPort = currentPort++;
+                            hubId = idx;
+                            props.setProperty("hub.suffix.name",String.valueOf(idx));
+                            props.setProperty("kahadb.dir","hub");
+                            props.setProperty("kahadb.prefix",String.valueOf(idx));
+                            props.setProperty("hub.hostname","localhost");
+                            props.setProperty("hub.port.number",String.valueOf(hubPort));
+                        }
+
+                        private void populateSpokeProperties(Properties props, int idx) {
+                            props.setProperty("spoke.suffix.name",hubId + "-" + idx);
+                            props.setProperty("hub.hostname","localhost");
+                            props.setProperty("hub.port.number",String.valueOf(hubPort));
+                            props.setProperty("kahadb.dir","spoke");
+                            props.setProperty("kahadb.prefix",hubId + "-" + idx);
+                            props.setProperty("spoke.hostname","localhost");
+                            props.setProperty("spoke.port.number",String.valueOf(currentPort++));
+                        }
+
+                        {
+                            setAmqPort(61616);
+                            setNumberOfHubs(1);
+                            setNumberOfSpokesPerHub(1);
+                        }
+                };
 		spawner.execute();
 		System.out.println("SLEEPING FOR 10 seconds");
 		Thread.sleep(10000);
