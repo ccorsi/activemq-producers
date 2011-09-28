@@ -4,7 +4,7 @@
 
   <groupId>com.fusesource.support.producers</groupId>
   <artifactId>activemq-producers</artifactId>
-  <version>5.5.0-fuse-00-27</version>
+  <version>5.5.1-fuse-00-08</version>
   <packaging>jar</packaging>
 
   <name>activemq-producers</name>
