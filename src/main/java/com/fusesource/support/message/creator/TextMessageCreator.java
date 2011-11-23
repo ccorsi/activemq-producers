@@ -17,14 +17,14 @@
 package com.fusesource.support.message.creator;
 
 import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 /**
  * @author Claudio Corsi
  *
  */
-public class TextMessageCreator extends AbstractMessageCreator {
+public class TextMessageCreator extends AbstractMessageCreator<TextMessage> {
 
 	private Session session;
 	private int cnt = 0;
@@ -36,10 +36,9 @@ public class TextMessageCreator extends AbstractMessageCreator {
 	/* (non-Javadoc)
 	 * @see com.fusesource.support.producers.MessageCreator#create()
 	 */
-	@Override
-	public Message create() throws JMSException {
+	public TextMessage create() throws JMSException {
 		// Create the message
-		Message message = session.createTextMessage("Message:" + cnt++);
+		TextMessage message = session.createTextMessage("Message:" + cnt++);
 		// Apply all chained settings
 		this.apply(message);
 		// Return newly created message

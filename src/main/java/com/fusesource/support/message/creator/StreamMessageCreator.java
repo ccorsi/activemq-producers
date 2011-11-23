@@ -17,36 +17,32 @@
 package com.fusesource.support.message.creator;
 
 import javax.jms.JMSException;
-import javax.jms.Message;
-
-import com.fusesource.support.message.chain.MessageChain;
-import com.fusesource.support.message.chain.NoopMessageChain;
+import javax.jms.Session;
+import javax.jms.StreamMessage;
 
 /**
  * @author Claudio Corsi
  *
  */
-public abstract class AbstractMessageCreator<T extends Message> implements MessageCreator {
+public class StreamMessageCreator extends AbstractMessageCreator<StreamMessage> {
 
-	private MessageChain chain = new NoopMessageChain();
+	private Session session;
 
-	/* (non-Javadoc)
-	 * @see com.fusesource.support.producers.MessageCreator#add(com.fusesource.support.message.chains.MessageChain)
-	 */
-	public void add(MessageChain chain) {
-		this.chain.chain(chain);
+	StreamMessageCreator(Session session) {
+		this.session = session;
 	}
 	
-	/**
-	 * @param message
-	 * @throws JMSException
+	/* (non-Javadoc)
+	 * @see com.fusesource.support.message.creator.MessageCreator#create()
 	 */
-	protected void apply(T message) throws JMSException {
-		MessageChain current = this.chain;
-		while(current != null) {
-			current.apply(message);
-			current = current.next();
-		}
+	@Override
+	public StreamMessage create() throws JMSException {
+		// Create a simple stream message
+		StreamMessage message = session.createStreamMessage();
+		// Apply the chain updates to the stream message
+		apply(message);
+		// return the newly created message
+		return message;
 	}
 
 }

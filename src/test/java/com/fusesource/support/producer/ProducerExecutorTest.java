@@ -145,7 +145,6 @@ public class ProducerExecutorTest {
 		MessageConsumer consumer = spokeSession.createConsumer(spokeDestination);
 		consumer.setMessageListener(new MessageListener() {
 
-			@Override
 			public void onMessage(Message message) {
 				System.out.println(Thread.currentThread().getName() + " - RECEIVED MESSAGE: " + message);
 			}
@@ -255,7 +254,6 @@ public class ProducerExecutorTest {
 		MessageConsumer consumer = spokeSession.createConsumer(spokeDestination);
 		consumer.setMessageListener(new MessageListener() {
 
-			@Override
 			public void onMessage(Message message) {
 				System.out.println(Thread.currentThread().getName() + " - RECEIVED MESSAGE: " + message);
 			}
